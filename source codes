@@ -1,0 +1,321 @@
+import pandas as pd
+
+# Read the dataset
+df = pd.read_csv('customer.csv')
+
+ # Display first few rows
+ df.head()
+
+
+import pandas as pd
+
+# Load the dataset
+df = pd.read_csv('customer.csv')
+
+# Display the shape of the dataset
+print("Shape:", df.shape)
+
+# Display column names
+print("Columns:", df.columns.tolist())
+
+# Display data types and non-null values
+print("\nData Info:")
+df.info()
+
+# Display summary statistics for numeric columns
+print("\nSummary Statistics:")
+print(df.describe())
+
+import pandas as pd
+
+# Load the dataset
+df = pd.read_csv('customer.csv')
+
+# Clean column names by stripping leading/trailing whitespace
+df.columns = df.columns.str.strip()
+
+# Check for missing values
+print("Missing values per column:\n", df.isnull().sum())
+
+# Check for duplicate rows
+print("Duplicate rows:", df.duplicated().sum())
+# Drop duplicate rows
+df = df.drop_duplicates()
+
+# Confirm the new shape
+print("New shape after dropping duplicates:", df.shape)
+
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# Count plot for the main category
+sns.countplot(data=df, x='er', order=df['er'].value_counts().index)
+plt.title('Distribution of Support Categories')
+plt.xlabel('Category')
+plt.ylabel('Count')
+plt.xticks(rotation=45)
+plt.show()
+
+# Count plot for the top 10 intents
+top_intents = df['we understand the importance of your access key'].value_counts().nlargest(10)
+
+sns.barplot(x=top_intents.values, y=top_intents.index)
+plt.title('Top 10 Intents')
+plt.xlabel('Frequency')
+plt.ylabel('Intent')
+plt.show()
+
+# Define target and features
+target = 'er'
+features = df.columns.drop(target)
+
+# Display features
+print("Features:", features.tolist())
+
+
+ #Identify categorical columns
+categorical_cols = df.select_dtypes(include=['object']).columns
+
+# Display the categorical columns
+print("Categorical Columns:", categorical_cols.tolist())
+
+# Apply one-hot encoding to all categorical columns
+df_encoded = pd.get_dummies(df, drop_first=True)
+
+# Show the new shape after encoding
+print("Encoded DataFrame shape:", df_encoded.shape)
+
+
+from sklearn.preprocessing import StandardScaler
+
+# Separate features and target
+# Get the one-hot encoded columns for the target 'er'
+er_encoded_cols = [col for col in df_encoded.columns if col.startswith('er_')]
+
+# Drop the one-hot encoded columns for the target
+X = df_encoded.drop(columns=er_encoded_cols)
+# Assuming 'er_...' columns are created during one-hot encoding
+y = df_encoded[er_encoded_cols[0]]  # Or any other encoded column if you have a multi-class target
+#Or if 'er' is still in the dataframe as is
+#X = df_encoded.drop('er', axis=1)
+#y = df_encoded['er']
+
+
+# Apply standard scaling to the features
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+
+# Check shapes
+print("X_scaled shape:", X_scaled.shape)
+print("y shape:", y.shape)
+
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+
+# Step 1: Load the dataset
+df = pd.read_csv('customer.csv')
+# Step 2: Display column names to choose features and target
+print(df.columns)
+
+# Step 3: Choose your features (X) and target (y)
+# Example: Let's say you choose all except 'er' as features and 'er' as the target
+# Assuming 'er' is your target column based on previous code blocks.
+# Replace 'er' with the actual target column name if different.
+X = df.drop('er', axis=1)
+y = df['er']
+
+# Step 4: Convert categorical variables if any (you may need to adjust this)
+X = pd.get_dummies(X)
+
+# Step 5: Scale the features
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+
+# Step 6: Train-test split
+X_train, X_test, y_train, y_test = train_test_split(X_scaled, y, test_size=0.2, random_state=42)
+
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler, LabelEncoder
+
+# Step 1: Load the dataset
+df = pd.read_csv('customer.csv')
+# Step 2: Display column names to choose features and target
+print(df.columns)
+
+# Step 3: Choose your features (X) and target (y)
+X = df.drop('er', axis=1)
+y = df['er']
+
+# Step 4: Convert categorical variables
+X = pd.get_dummies(X)
+# Encode the target variable using LabelEncoder
+label_encoder = LabelEncoder()
+y_encoded = label_encoder.fit_transform(y)
+
+# Step 5: Scale the features
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+
+# Step 6: Train-test split
+X_train, X_test, y_train, y_test = train_test_split(X_scaled, y_encoded, test_size=0.2, random_state=42)
+
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler, LabelEncoder
+from sklearn.linear_model import LinearRegression # Import the model
+from sklearn.metrics import mean_squared_error, r2_score
+
+# Step 1: Load the dataset
+df = pd.read_csv('customer.csv')
+# Step 2: Display column names to choose features and target
+print(df.columns)
+
+# Step 3: Choose your features (X) and target (y)
+X = df.drop('er', axis=1)
+y = df['er']
+
+# Step 4: Convert categorical variables
+X = pd.get_dummies(X)
+# Encode the target variable using LabelEncoder
+label_encoder = LabelEncoder()
+y_encoded = label_encoder.fit_transform(y)
+
+# Step 5: Scale the features
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+
+# Step 6: Train-test split
+X_train, X_test, y_train, y_test = train_test_split(X_scaled, y_encoded, test_size=0.2, random_state=42)
+
+# Step 7: Create and train the model (using Linear Regression as an example)
+model = LinearRegression()
+model.fit(X_train, y_train)
+
+# Step 8: Make predictions
+y_pred = model.predict(X_test)  # This line is crucial
+
+# Evaluate the model
+print("Mean Squared Error (MSE):", mean_squared_error(y_test, y_pred))
+print("R² Score:", r2_score(y_test, y_pred))
+
+import pandas as pd
+
+# Step 1: Define a new input (replace keys and values based on your dataset columns)
+new_input = {
+    'column1': 'value1',
+    'column2': 42,
+    'column3': 'value2',
+    # Add all required columns used in training here
+}
+
+# Step 2: Convert to DataFrame
+new_df = pd.DataFrame([new_input])
+
+# Step 3: Match the feature structure (e.g., apply get_dummies and align with training features)
+new_df_encoded = pd.get_dummies(new_df)
+
+# Align columns with training data
+new_df_encoded = new_df_encoded.reindex(columns=X.columns, fill_value=0)
+
+# Step 4: Scale using the same scaler
+new_input_scaled = scaler.transform(new_df_encoded)
+
+# Step 5: Predict
+prediction = model.predict(new_input_scaled)
+
+print("Predicted value:", prediction[0])
+
+
+import numpy as np
+import pandas as pd
+
+# Step 1: New input sample — replace with actual column names and values from your dataset
+new_input = {
+    'ticket_type': 'technical',         # example value
+    'priority': 'high',                 # example value
+    'channel': 'email',                 # example value
+    'agent_experience': 3,              # example value
+    # Add all relevant features here, excluding the target column
+}
+
+# Step 2: Convert to DataFrame
+new_df = pd.DataFrame([new_input])
+
+# Step 3: Combine with original data (excluding the target column) to ensure consistent encoding
+# Instead of 'response_time', use the actual target column name ('er' in this case)
+df_temp = pd.concat([df.drop('er', axis=1), new_df], ignore_index=True)
+
+# Step 4: One-hot encode
+df_temp_encoded = pd.get_dummies(df_temp, drop_first=True)
+
+# Step 5: Reindex to match the trained feature columns
+# Assuming 'er' was your original target column
+# Get training features (excluding target 'er')
+training_features = X.columns  # X should contain your training features
+df_temp_encoded = df_temp_encoded.reindex(columns=training_features, fill_value=0)
+
+# Step 6: Scale the new input (using the same scaler used on X)
+new_input_scaled = scaler.transform(df_temp_encoded.tail(1))
+
+# Step 7: Predict
+prediction = model.predict(new_input_scaled)
+print("Predicted response_time:", prediction[0]) # You might want to change this to "Predicted er:"
+
+# Predict the response time from new input
+predicted_response_time = model.predict(new_input_scaled)
+
+print("\n⏱️ Predicted Response Time:", round(predicted_response_time[0], 2))
+
+
+!pip install gradio
+
+import gradio as gr
+import pandas as pd
+import numpy as np
+import pickle
+
+# Assuming you have already trained and saved your model as follows:
+# import joblib
+# joblib.dump(model, 'model.pkl')
+# joblib.dump(scaler, 'scaler.pkl')
+# joblib.dump(X.columns, 'columns.pkl')  # Save training columns
+
+# Load model, scaler, and training columns
+try:
+    model = pickle.load(open('model.pkl', 'rb'))
+    scaler = pickle.load(open('scaler.pkl', 'rb'))
+    columns = pickle.load(open('columns.pkl', 'rb'))  # list of X.columns used in training
+except FileNotFoundError:
+    print("One or more pickle files not found. Make sure to train and save the model, scaler, and columns first.")
+    # You might want to exit or handle the error in another way here.
+
+# ... (rest of the code)
+
+
+import gradio as gr
+
+def chatbot_response(message, history):
+    # Simple rule-based logic for common customer service queries
+    message_lower = message.lower()
+    if "refund" in message_lower:
+        return "I'm sorry to hear that! Could you please provide your order ID so I can process the refund?"
+    elif "order status" in message_lower or "where is my order" in message_lower:
+        return "Sure! Please provide your order number and I’ll check the status right away."
+    elif "cancel" in message_lower:
+        return "To cancel your order, I need your order ID. Could you please share it with me?"
+    elif "hi" in message_lower or "hello" in message_lower:
+        return "Hello! I'm your virtual assistant. How can I help you today?"
+    elif "help" in message_lower:
+        return "I'm here to help! Ask me anything about your order, returns, payments, or delivery."
+    else:
+        return "Thank you for your message. Please provide more details so I can better assist you."
+
+chat_interface = gr.ChatInterface(
+    fn=chatbot_response,
+    title="💬 Customer Support Assistant",
+    description="Ask me about orders, refunds, cancellations, or any customer service issues."
+)
+
+chat_interface.launch(share=True, debug=True)
